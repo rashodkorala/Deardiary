@@ -52,4 +52,4 @@ To run the **DearDiary** app, follow these steps:
 
 The **DearDiary** project is a simple yet effective Flutter app that allows users to keep a digital diary with ease. With its CRUD operations, user-friendly interface, and data persistence through Hive, it provides a convenient way to document daily experiences and emotions. Whether you want to reflect on the past, remember joyful moments, or track personal growth, **DearDiary** is your perfect digital companion.
 
-<video src="demo.mp4" controls="controls" autoplay loop mute width="300" height="700">
+<video src="demo.mp4" controls="controls" width="300" height="700">
