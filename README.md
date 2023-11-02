@@ -16,11 +16,9 @@ The **DearDiary** app offers the following features:
 
 4. **Delete Entry:** Users can delete entries that they no longer wish to keep in their diary. This ensures that the diary remains clutter-free and only contains the most meaningful content.
 
-5. **Search Entries:** The app provides a search feature that allows users to filter and search for specific diary entries based on keywords, date, or rating. This makes it easy to find past entries quickly.
+5. **Data Persistence:** The app uses Hive as its local database to store diary entries. Hive is a fast and efficient NoSQL database for Flutter, ensuring that the user's data is securely stored on their device.
 
-6. **Data Persistence:** The app uses Hive as its local database to store diary entries. Hive is a fast and efficient NoSQL database for Flutter, ensuring that the user's data is securely stored on their device.
-
-7. **User-Friendly Interface:** The app is designed with a user-friendly and intuitive interface, making it easy for users to navigate and interact with their diary entries.
+6. **User-Friendly Interface:** The app is designed with a user-friendly and intuitive interface, making it easy for users to navigate and interact with their diary entries.
 
 ## Technologies Used
 
