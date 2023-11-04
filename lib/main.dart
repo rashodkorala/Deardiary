@@ -1,6 +1,8 @@
-import 'package:deardiary/view/diary_login_view.dart';
+import '/view/diary_login_view.dart';
+import '/view/diary_signup_view.dart';
 import 'package:flutter/material.dart';
 import 'controller/diary_controller.dart';
+import 'view/diary_forgot_passowrd_view.dart';
 import 'view/diary_log_view.dart';
 import 'view/diary_entry_view.dart';
 
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
         '/diaryLogView': (context) => const DiaryLogView(),
         '/diaryEntryView': (context) => DiaryEntryView(),
         '/loginView': (context) => LoginView(),
+        '/signupView': (context) => SignupView(),
+        '/forgotPasswordView': (context) => ForgotPasswordView(),
         // Add more routes for other pages here
       },
     );
