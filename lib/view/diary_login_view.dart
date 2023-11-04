@@ -93,6 +93,7 @@ class _LoginViewState extends State<LoginView> {
                           child: TextButton(
                             onPressed: () {
                               // Add a navigation route to the registration page when "Register here" is clicked
+                              Navigator.pushNamed(context, '/signupView');
                             },
                             child: Text(
                               'Register here',
@@ -116,6 +117,7 @@ class _LoginViewState extends State<LoginView> {
                     TextButton(
                       onPressed: () {
                         // Add a navigation route to reset password page
+                        Navigator.pushNamed(context, '/forgotPasswordView');
                       },
                       child: const Text(
                         'Forgot your password?',
