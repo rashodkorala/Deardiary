@@ -1,3 +1,4 @@
+import 'package:deardiary/view/diary_login_view.dart';
 import 'package:flutter/material.dart';
 import 'controller/diary_controller.dart';
 import 'view/diary_log_view.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/diaryLogView': (context) => const DiaryLogView(),
         '/diaryEntryView': (context) => DiaryEntryView(),
+        '/loginView': (context) => LoginView(),
         // Add more routes for other pages here
       },
     );
@@ -42,7 +44,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
     // Delay for 1.5 seconds and then navigate to DiaryLogView
     Future.delayed(Duration(seconds: 1, milliseconds: 500), () {
-      Navigator.pushReplacementNamed(context, '/diaryLogView');
+      Navigator.pushReplacementNamed(context, '/loginView');
     });
   }
 
