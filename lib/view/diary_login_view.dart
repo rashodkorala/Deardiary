@@ -9,9 +9,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool isRegisterHereFocused = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String email = '';
   String password = '';
+  String errorMessage = '';
 
   Future<void> signInUser() async {
     try {
@@ -25,13 +25,15 @@ class _LoginViewState extends State<LoginView> {
       if (user != null) {
         // User is logged in, navigate to the diary_log_view.dart view
         Navigator.pushReplacementNamed(context, '/diaryLogView');
-      } else {
-        // Handle login failure
-        
-      }
+      } else {}
     } catch (e) {
       print(e.toString());
       // Handle login error
+      setState(() {
+        // Handle login failure and set the error message
+        errorMessage = 'Login failed. Please try again.';
+      });
+      print("login failed");
     }
   }
 
@@ -58,7 +60,19 @@ class _LoginViewState extends State<LoginView> {
                   children: <Widget>[
                     // Your logo or app name can go here
                     // Example: Image.asset('assets/logo.png'),
-
+                    Icon(
+                      Icons.book,
+                      size: 100,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    Text(
+                      'Dear Diary',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
                     SizedBox(height: 20.0),
 
                     TextField(
@@ -66,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
                         email = value;
                       },
                       decoration: InputDecoration(
-                        labelText: 'Username or Email',
+                        labelText: 'Email',
                         labelStyle:
                             TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                       ),
@@ -87,7 +101,19 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                     ),
-
+                    SizedBox(height: 20.0),
+                    Builder(builder: (BuildContext context) {
+                      if (errorMessage.isNotEmpty) {
+                        return Text(
+                          errorMessage,
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    }),
                     SizedBox(height: 20.0),
 
                     ElevatedButton(
@@ -97,6 +123,19 @@ class _LoginViewState extends State<LoginView> {
                       child: Text('Login'),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                    ),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        ; // Call the function to handle Google Sign-In
+                      },
+                      child: Text('Login with Google'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red, // You can customize the color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
