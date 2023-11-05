@@ -27,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
         Navigator.pushReplacementNamed(context, '/diaryLogView');
       } else {
         // Handle login failure
+        
       }
     } catch (e) {
       print(e.toString());

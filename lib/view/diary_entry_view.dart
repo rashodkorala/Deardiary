@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deardiary/model/diary_entry_model.dart';
 import 'package:flutter/material.dart';
-import '../controller/diary_controller.dart';
 import 'package:intl/intl.dart';
+
+import '../controller/diary_entry_service.dart';
 
 class DiaryEntryView extends StatefulWidget {
   final DiaryEntry? diaryEntry; // Add this line
@@ -34,12 +36,13 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
   }
 
   Future<void> _loadExistingDates() async {
-    final diaryController = DiaryController();
-    await diaryController.init();
-    final entries = diaryController.getDiaryEntries();
-    existingDates = entries.map((entry) => entry.date).toList();
-
-    print(existingDates);
+    if (widget.diaryEntry != null) {
+      final existingDate = widget.diaryEntry!.date;
+      if (existingDates.contains(existingDate)) {
+        // Date already exists, show a warning dialog.
+        _showWarningDialog();
+      }
+    }
   }
 
   ElevatedButton buildDeleteButton() {
@@ -268,56 +271,74 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
 
   void _deleteDiaryEntry() async {
     if (widget.diaryEntry != null) {
-      final existingEntry = widget.diaryEntry!;
-      final diaryController = DiaryController();
-
-      // Find the index of the existing entry in the list
-      final index =
-          existingDates.indexWhere((date) => date == existingEntry.date);
-      if (index >= 0) {
-        await diaryController.deleteDiaryEntry(index);
-        Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, '/diaryLogView');
+      final diaryService = DiaryEntryService();
+      try {
+        await diaryService.deleteDiaryEntry(widget.diaryEntry!);
+        // Optionally, you can show a confirmation message.
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Diary entry deleted successfully'),
+          ),
+        );
+      } catch (e) {
+        print('Error deleting diary entry: $e');
       }
     }
   }
 
   void _saveDiaryEntry() async {
-    final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-    if (existingDates.contains(formattedDate)) {
-      //show a warning message
-      _showWarningDialog();
-    } else {
-      final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-      final diaryEntry = DiaryEntry(
-        date: formattedDate,
-        content: _descriptionController.text,
-        rating: _rating,
+    final selectedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    final content = _descriptionController.text;
+
+    final newEntry = DiaryEntry(
+      date: selectedDate,
+      content: content,
+      rating: _rating,
+    );
+
+    final diaryService = DiaryEntryService();
+    try {
+      await diaryService.addNewDiaryEntry(newEntry);
+      // Optionally, you can show a confirmation message.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Diary entry saved successfully'),
+        ),
       );
-      await DiaryController().addDiaryEntry(diaryEntry);
-      Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/diaryLogView');
+      // Clear the input fields after saving
+      _descriptionController.text = '';
+      setState(() {
+        _rating = 0;
+        _selectedDate = DateTime.now();
+      });
+    } catch (e) {
+      print('Error saving diary entry: $e');
     }
   }
 
   void _updateDiaryEntry() async {
     if (widget.diaryEntry != null) {
-      final existingEntry = widget.diaryEntry!;
+      final selectedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+      final content = _descriptionController.text;
+
       final updatedEntry = DiaryEntry(
-        date: DateFormat('yyyy-MM-dd').format(_selectedDate),
-        content: _descriptionController.text,
+        id: widget.diaryEntry!.id,
+        date: selectedDate,
+        content: content,
         rating: _rating,
       );
 
-      final diaryController = DiaryController();
-
-      // Find the index of the existing entry in the list
-      final index =
-          existingDates.indexWhere((date) => date == existingEntry.date);
-      if (index >= 0) {
-        await diaryController.updateDiaryEntry(index, updatedEntry);
-        Navigator.pop(context);
-        Navigator.pushReplacementNamed(context, '/diaryLogView');
+      final diaryService = DiaryEntryService();
+      try {
+        await diaryService.updateDiaryEntry(updatedEntry);
+        // Optionally, you can show a confirmation message.
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Diary entry updated successfully'),
+          ),
+        );
+      } catch (e) {
+        print('Error updating diary entry: $e');
       }
     }
   }

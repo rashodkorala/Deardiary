@@ -4,21 +4,18 @@ import 'package:firebase_core/firebase_core.dart';
 import '/view/diary_login_view.dart';
 import '/view/diary_signup_view.dart';
 import 'package:flutter/material.dart';
-import 'controller/diary_controller.dart';
 import 'view/diary_forgot_passowrd_view.dart';
 import 'view/diary_log_view.dart';
 import 'view/diary_entry_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final diaryController = DiaryController();
-  // await diaryController.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp(diaryController: diaryController));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required DiaryController diaryController});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

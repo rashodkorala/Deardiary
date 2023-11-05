@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../controller/diary_entry_service.dart';
 import 'diary_entry_view.dart';
 import '../model/diary_entry_model.dart';
-import '../controller/diary_controller.dart';
 
 class DiaryLogView extends StatefulWidget {
   const DiaryLogView({Key? key}) : super(key: key);
@@ -11,7 +11,6 @@ class DiaryLogView extends StatefulWidget {
 }
 
 class _DiaryLogViewState extends State<DiaryLogView> {
-  final DiaryController _diaryController = DiaryController();
   List<DiaryEntry> _diaryEntries = [];
 
   @override
@@ -21,12 +20,16 @@ class _DiaryLogViewState extends State<DiaryLogView> {
   }
 
   Future<void> _loadDiaryEntries() async {
-    await _diaryController.init();
-    final entries = _diaryController.getDiaryEntries();
-    if (mounted) {
+    try {
+      // Use your DiaryEntryService to fetch the entries
+      final diaryService = DiaryEntryService();
+      final entries = await diaryService.getAllDiaryEntries();
+
       setState(() {
         _diaryEntries = entries;
       });
+    } catch (e) {
+      print('Error loading diary entries: $e');
     }
   }
 
@@ -50,12 +53,6 @@ class _DiaryLogViewState extends State<DiaryLogView> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _diaryController.closeBox();
-    super.dispose();
   }
 
   @override
