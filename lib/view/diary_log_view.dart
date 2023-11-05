@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../controller/diary_entry_service.dart';
 import 'diary_entry_view.dart';
@@ -61,6 +62,17 @@ class _DiaryLogViewState extends State<DiaryLogView> {
     _loadDiaryEntries();
   }
 
+  Future<void> _handleLogout() async {
+    try {
+      await FirebaseAuth.instance.signOut(); // Sign out the current user
+      Navigator.pushReplacementNamed(
+          context, '/loginView'); // Navigate to the login screen
+    } catch (e) {
+      print('Error logging out: $e');
+      // Handle the error as needed (e.g., display an error message)
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +84,16 @@ class _DiaryLogViewState extends State<DiaryLogView> {
           fontWeight: FontWeight.bold,
         ),
         backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+            onPressed: () {
+              _handleLogout();
+              // Navigate to the login or authentication screen
+              Navigator.pushReplacementNamed(context, '/loginView');
+            },
+            icon: Icon(Icons.logout), // You can change the icon as needed
+          ),
+        ],
       ),
       body: ListView(
         children: <Widget>[

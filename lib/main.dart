@@ -1,4 +1,5 @@
 import 'package:deardiary/firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import '/view/diary_login_view.dart';
@@ -11,11 +12,13 @@ import 'view/diary_entry_view.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+  User? user = FirebaseAuth.instance.currentUser;
+  runApp(MyApp(user: user));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final User? user;
+  const MyApp({Key? key, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +49,15 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-
-    // Delay for 1.5 seconds and then navigate to DiaryLogView
     Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
-      Navigator.pushReplacementNamed(context, '/loginView');
+      // Check if there is a user (logged in)
+      if (FirebaseAuth.instance.currentUser != null) {
+        // User is logged in, navigate to DiaryLogView
+        Navigator.pushReplacementNamed(context, '/diaryLogView');
+      } else {
+        // User is not logged in, navigate to LoginView
+        Navigator.pushReplacementNamed(context, '/loginView');
+      }
     });
   }
 

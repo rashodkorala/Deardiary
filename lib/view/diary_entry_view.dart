@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deardiary/model/diary_entry_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -32,16 +31,20 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       _rating = diaryEntry.rating;
       _descriptionController.text = diaryEntry.content;
       _selectedDate = DateTime.parse(diaryEntry.date);
+      print(_selectedDate);
     }
   }
 
   Future<void> _loadExistingDates() async {
-    if (widget.diaryEntry != null) {
-      final existingDate = widget.diaryEntry!.date;
-      if (existingDates.contains(existingDate)) {
-        // Date already exists, show a warning dialog.
-        _showWarningDialog();
-      }
+    try {
+      final diaryService = DiaryEntryService();
+      final entries = await diaryService.getAllDiaryEntries();
+      final dates = entries.map((e) => e.date).toList();
+      setState(() {
+        existingDates = dates;
+      });
+    } catch (e) {
+      print('Error loading diary entries: $e');
     }
   }
 
@@ -280,6 +283,9 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
             content: Text('Diary entry deleted successfully'),
           ),
         );
+        // Navigate to the diary_log_view after deleting the entry
+        Navigator.pop(context, true);
+        Navigator.pushReplacementNamed(context, '/diaryLogView');
       } catch (e) {
         print('Error deleting diary entry: $e');
       }
@@ -289,6 +295,12 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
   void _saveDiaryEntry() async {
     final selectedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
     final content = _descriptionController.text;
+    print(existingDates);
+    if (existingDates.contains(selectedDate)) {
+      // Date already exists, show a warning dialog.
+      _showWarningDialog();
+      return; // Don't save the entry if the date already exists
+    }
 
     final newEntry = DiaryEntry(
       date: selectedDate,
@@ -299,18 +311,23 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     final diaryService = DiaryEntryService();
     try {
       await diaryService.addNewDiaryEntry(newEntry);
-      // Optionally, you can show a confirmation message.
+      // Show a confirmation SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Diary entry saved successfully'),
         ),
       );
+
       // Clear the input fields after saving
       _descriptionController.text = '';
       setState(() {
         _rating = 0;
         _selectedDate = DateTime.now();
       });
+
+      // Navigate to the diary_log_view
+      Navigator.pop(context, true);
+      Navigator.pushReplacementNamed(context, '/diaryLogView');
     } catch (e) {
       print('Error saving diary entry: $e');
     }
@@ -337,6 +354,9 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
             content: Text('Diary entry updated successfully'),
           ),
         );
+
+        Navigator.pop(context, true);
+        Navigator.pushReplacementNamed(context, '/diaryLogView');
       } catch (e) {
         print('Error updating diary entry: $e');
       }
