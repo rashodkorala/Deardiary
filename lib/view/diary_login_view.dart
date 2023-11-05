@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -7,14 +8,38 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool isRegisterHereFocused = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String email = '';
+  String password = '';
+
+  Future<void> signInUser() async {
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // User is logged in, navigate to the diary_log_view.dart view
+        Navigator.pushReplacementNamed(context, '/diaryLogView');
+      } else {
+        // Handle login failure
+      }
+    } catch (e) {
+      print(e.toString());
+      // Handle login error
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
-        backgroundColor:
-            Colors.black, // Set the app bar background color to black
+        backgroundColor: Colors.black,
       ),
       body: Center(
         child: Padding(
@@ -24,8 +49,7 @@ class _LoginViewState extends State<LoginView> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255,
-                      255), // Set the container background color to black
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 padding: EdgeInsets.all(16.0),
@@ -37,45 +61,43 @@ class _LoginViewState extends State<LoginView> {
                     SizedBox(height: 20.0),
 
                     TextField(
+                      onChanged: (value) {
+                        email = value;
+                      },
                       decoration: InputDecoration(
                         labelText: 'Username or Email',
-                        labelStyle: TextStyle(
-                            color: const Color.fromARGB(
-                                255, 0, 0, 0)), // Text color
+                        labelStyle:
+                            TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                       ),
-                      style: TextStyle(
-                          color:
-                              const Color.fromARGB(255, 0, 0, 0)), // Text color
+                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                     ),
 
                     SizedBox(height: 10.0),
 
                     TextField(
-                      obscureText: true, // For password input
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        labelStyle: TextStyle(
-                            color: const Color.fromARGB(
-                                255, 0, 0, 0)), // Text color
+                        labelStyle:
+                            TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                       ),
-                      style: TextStyle(
-                          color:
-                              const Color.fromARGB(255, 0, 0, 0)), // Text color
+                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                     ),
 
                     SizedBox(height: 20.0),
 
                     ElevatedButton(
                       onPressed: () {
-                        // Handle login button press here
+                        signInUser(); // Call the function to handle the login
                       },
                       child: Text('Login'),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors
-                            .black, // Set button background color to black
+                        primary: Colors.black,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              30.0), // Make the button round
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                     ),
@@ -92,21 +114,17 @@ class _LoginViewState extends State<LoginView> {
                           },
                           child: TextButton(
                             onPressed: () {
-                              // Add a navigation route to the registration page when "Register here" is clicked
                               Navigator.pushNamed(context, '/signupView');
                             },
                             child: Text(
                               'Register here',
                               style: TextStyle(
                                 color: isRegisterHereFocused
-                                    ? Colors
-                                        .blue // Highlighted text color when focused
-                                    : Colors.blue, // Regular text color
+                                    ? Colors.blue
+                                    : Colors.blue,
                                 decoration: isRegisterHereFocused
-                                    ? TextDecoration
-                                        .underline // Underline when focused
-                                    : TextDecoration
-                                        .none, // No underline when not focused
+                                    ? TextDecoration.underline
+                                    : TextDecoration.none,
                               ),
                             ),
                           ),
@@ -116,13 +134,11 @@ class _LoginViewState extends State<LoginView> {
 
                     TextButton(
                       onPressed: () {
-                        // Add a navigation route to reset password page
                         Navigator.pushNamed(context, '/forgotPasswordView');
                       },
                       child: const Text(
                         'Forgot your password?',
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0)), // Text color
+                        style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                       ),
                     ),
                   ],

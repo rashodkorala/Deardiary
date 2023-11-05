@@ -1,3 +1,6 @@
+import 'package:deardiary/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import '/view/diary_login_view.dart';
 import '/view/diary_signup_view.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +9,11 @@ import 'view/diary_forgot_passowrd_view.dart';
 import 'view/diary_log_view.dart';
 import 'view/diary_entry_view.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final diaryController = DiaryController();
-  await diaryController.init();
+  // await diaryController.init();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp(diaryController: diaryController));
 }
 
@@ -47,7 +51,7 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
 
     // Delay for 1.5 seconds and then navigate to DiaryLogView
-    Future.delayed(Duration(seconds: 1, milliseconds: 500), () {
+    Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
       Navigator.pushReplacementNamed(context, '/loginView');
     });
   }

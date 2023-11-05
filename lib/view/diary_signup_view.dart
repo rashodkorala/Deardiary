@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupView extends StatefulWidget {
   @override
@@ -6,13 +7,39 @@ class SignupView extends StatefulWidget {
 }
 
 class _SignupViewState extends State<SignupView> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String fullName = '';
+  String email = '';
+  String password = '';
+
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text('Sign-up was successful!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.pushReplacementNamed(context, '/loginView');
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sign Up'),
-        backgroundColor:
-            Colors.black, // Set the app bar background color to black
+        backgroundColor: Colors.black,
       ),
       body: Center(
         child: Padding(
@@ -22,8 +49,7 @@ class _SignupViewState extends State<SignupView> {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: Colors
-                      .white, // Set the container background color to white
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 padding: EdgeInsets.all(16.0),
@@ -35,50 +61,65 @@ class _SignupViewState extends State<SignupView> {
                     SizedBox(height: 20.0),
 
                     TextField(
+                      onChanged: (value) {
+                        fullName = value;
+                      },
                       decoration: InputDecoration(
                         labelText: 'Full Name',
-                        labelStyle:
-                            TextStyle(color: Colors.black), // Text color
+                        labelStyle: TextStyle(color: Colors.black),
                       ),
-                      style: TextStyle(color: Colors.black), // Text color
+                      style: TextStyle(color: Colors.black),
                     ),
 
                     SizedBox(height: 10.0),
 
                     TextField(
+                      onChanged: (value) {
+                        email = value;
+                      },
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle:
-                            TextStyle(color: Colors.black), // Text color
+                        labelStyle: TextStyle(color: Colors.black),
                       ),
-                      style: TextStyle(color: Colors.black), // Text color
+                      style: TextStyle(color: Colors.black),
                     ),
 
                     SizedBox(height: 10.0),
 
                     TextField(
-                      obscureText: true, // For password input
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        labelStyle:
-                            TextStyle(color: Colors.black), // Text color
+                        labelStyle: TextStyle(color: Colors.black),
                       ),
-                      style: TextStyle(color: Colors.black), // Text color
+                      style: TextStyle(color: Colors.black),
                     ),
 
                     SizedBox(height: 20.0),
 
                     ElevatedButton(
-                      onPressed: () {
-                        // Handle sign-up button press here
+                      onPressed: () async {
+                        try {
+                          await _auth.createUserWithEmailAndPassword(
+                            email: email,
+                            password: password,
+                          );
+
+                          // Show a success dialog
+                          showSuccessDialog();
+                        } catch (e) {
+                          print(e.toString());
+                          // Handle sign-up error
+                        }
                       },
                       child: Text('Sign Up'),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors
-                            .black, // Set button background color to black
+                        primary: Colors.black,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              30.0), // Make the button round
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
                     ),
@@ -89,14 +130,13 @@ class _SignupViewState extends State<SignupView> {
                         Text("Already have an account? "),
                         TextButton(
                           onPressed: () {
-                            // Add a navigation route to the login page when "Log in" is clicked
                             Navigator.pushReplacementNamed(
                                 context, '/loginView');
                           },
                           child: Text(
                             'Log in',
                             style: TextStyle(
-                              color: Colors.blue, // Highlighted text color
+                              color: Colors.blue,
                             ),
                           ),
                         ),
