@@ -75,5 +75,5 @@ To run the **DearDiary** app, follow these steps:
 The **DearDiary** project is a comprehensive Flutter app that allows users to keep a digital diary with the added benefits of Firebase Authentication and Cloud Firestore. With its CRUD operations, user-friendly interface, and cloud-based data storage, it provides a convenient way to document daily experiences and emotions securely. Whether you want to reflect on the past, remember joyful moments, or track personal growth, **DearDiary** is your perfect digital companion with enhanced privacy and accessibility, including account management and password reset functionality.
 
 <div>
-<image src="assets/ss2.png" width="300" highet="200">
-<image src="assets/ss1.png" width="300" highet="200">
+<image src="assets/ss2.png" width="200" highet="100">
+<image src="assets/ss1.png" width="200" highet="100">
