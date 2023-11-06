@@ -5,7 +5,7 @@ import '../model/diary_entry_model.dart';
 
 class DiaryEntryService {
   final user = FirebaseAuth.instance.currentUser;
- 
+
   final CollectionReference DiaryEntryCollection;
 
   DiaryEntryService()
@@ -31,5 +31,17 @@ class DiaryEntryService {
 
   Future<void> deleteDiaryEntry(DiaryEntry diaryEntry) async {
     return await DiaryEntryCollection.doc(diaryEntry.id).delete();
+  }
+
+  Future<List<DiaryEntry>> getDiaryEntriesForMonth(int month, int year) async {
+    final startTimestamp = Timestamp.fromDate(DateTime(year, month, 1));
+    final endTimestamp = Timestamp.fromDate(DateTime(year, month + 1, 0));
+
+    QuerySnapshot snapshot = await DiaryEntryCollection.where('date',
+            isGreaterThanOrEqualTo: startTimestamp)
+        .where('date', isLessThanOrEqualTo: endTimestamp)
+        .get();
+
+    return snapshot.docs.map((doc) => DiaryEntry.fromMap(doc)).toList();
   }
 }

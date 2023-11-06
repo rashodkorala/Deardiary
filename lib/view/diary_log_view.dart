@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../controller/diary_entry_service.dart';
 import 'diary_entry_view.dart';
 import '../model/diary_entry_model.dart';
+import 'diary_statistics_view.dart';
 
 class DiaryLogView extends StatefulWidget {
   const DiaryLogView({Key? key}) : super(key: key);
@@ -85,6 +86,17 @@ class _DiaryLogViewState extends State<DiaryLogView> {
         ),
         backgroundColor: Colors.black,
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DiaryStatisticView(),
+                ),
+              );
+            },
+            icon: Icon(Icons.analytics), // Choose an appropriate icon
+          ),
           IconButton(
             onPressed: () {
               _handleLogout();

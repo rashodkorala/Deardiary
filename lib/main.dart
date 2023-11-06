@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'view/diary_forgot_passowrd_view.dart';
 import 'view/diary_log_view.dart';
 import 'view/diary_entry_view.dart';
+import 'view/diary_statistics_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/loginView': (context) => LoginView(),
         '/signupView': (context) => SignupView(),
         '/forgotPasswordView': (context) => ForgotPasswordView(),
-        // Add more routes for other pages here
+        '/diaryStatisticView': (context) => DiaryStatisticView(),
       },
     );
   }
