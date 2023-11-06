@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../controller/diary_entry_service.dart';
 import 'diary_entry_view.dart';
 import '../model/diary_entry_model.dart';
-import '../controller/diary_controller.dart';
+import 'diary_statistics_view.dart';
 
 class DiaryLogView extends StatefulWidget {
   const DiaryLogView({Key? key}) : super(key: key);
@@ -11,7 +13,6 @@ class DiaryLogView extends StatefulWidget {
 }
 
 class _DiaryLogViewState extends State<DiaryLogView> {
-  final DiaryController _diaryController = DiaryController();
   List<DiaryEntry> _diaryEntries = [];
 
   @override
@@ -21,12 +22,16 @@ class _DiaryLogViewState extends State<DiaryLogView> {
   }
 
   Future<void> _loadDiaryEntries() async {
-    await _diaryController.init();
-    final entries = _diaryController.getDiaryEntries();
-    if (mounted) {
+    try {
+      // Use your DiaryEntryService to fetch the entries
+      final diaryService = DiaryEntryService();
+      final entries = await diaryService.getAllDiaryEntries();
+
       setState(() {
         _diaryEntries = entries;
       });
+    } catch (e) {
+      print('Error loading diary entries: $e');
     }
   }
 
@@ -53,15 +58,20 @@ class _DiaryLogViewState extends State<DiaryLogView> {
   }
 
   @override
-  void dispose() {
-    _diaryController.closeBox();
-    super.dispose();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _loadDiaryEntries();
+  }
+
+  Future<void> _handleLogout() async {
+    try {
+      await FirebaseAuth.instance.signOut(); // Sign out the current user
+      Navigator.pushReplacementNamed(
+          context, '/loginView'); // Navigate to the login screen
+    } catch (e) {
+      print('Error logging out: $e');
+      // Handle the error as needed (e.g., display an error message)
+    }
   }
 
   @override
@@ -75,6 +85,27 @@ class _DiaryLogViewState extends State<DiaryLogView> {
           fontWeight: FontWeight.bold,
         ),
         backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DiaryStatisticView(),
+                ),
+              );
+            },
+            icon: Icon(Icons.analytics), // Choose an appropriate icon
+          ),
+          IconButton(
+            onPressed: () {
+              _handleLogout();
+              // Navigate to the login or authentication screen
+              Navigator.pushReplacementNamed(context, '/loginView');
+            },
+            icon: Icon(Icons.logout), // You can change the icon as needed
+          ),
+        ],
       ),
       body: ListView(
         children: <Widget>[

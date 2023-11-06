@@ -1,17 +1,25 @@
+import 'package:deardiary/firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import '/view/diary_login_view.dart';
+import '/view/diary_signup_view.dart';
 import 'package:flutter/material.dart';
-import 'controller/diary_controller.dart';
+import 'view/diary_forgot_passowrd_view.dart';
 import 'view/diary_log_view.dart';
 import 'view/diary_entry_view.dart';
+import 'view/diary_statistics_view.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final diaryController = DiaryController();
-  await diaryController.init();
-  runApp(MyApp(diaryController: diaryController));
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  User? user = FirebaseAuth.instance.currentUser;
+  runApp(MyApp(user: user));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required DiaryController diaryController});
+  final User? user;
+  const MyApp({Key? key, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/diaryLogView': (context) => const DiaryLogView(),
         '/diaryEntryView': (context) => DiaryEntryView(),
-        // Add more routes for other pages here
+        '/loginView': (context) => LoginView(),
+        '/signupView': (context) => SignupView(),
+        '/forgotPasswordView': (context) => ForgotPasswordView(),
+        '/diaryStatisticView': (context) => DiaryStatisticView(),
       },
     );
   }
@@ -39,10 +50,15 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-
-    // Delay for 1.5 seconds and then navigate to DiaryLogView
-    Future.delayed(Duration(seconds: 1, milliseconds: 500), () {
-      Navigator.pushReplacementNamed(context, '/diaryLogView');
+    Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
+      // Check if there is a user (logged in)
+      if (FirebaseAuth.instance.currentUser != null) {
+        // User is logged in, navigate to DiaryLogView
+        Navigator.pushReplacementNamed(context, '/diaryLogView');
+      } else {
+        // User is not logged in, navigate to LoginView
+        Navigator.pushReplacementNamed(context, '/loginView');
+      }
     });
   }
 
