@@ -5,7 +5,7 @@ class DiaryEntry {
   String date;
   String content;
   int rating;
-  String imageUrl;
+  String? imageUrl;
 
   DiaryEntry({
     this.id = '', // Initialize with an empty string

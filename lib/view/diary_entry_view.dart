@@ -244,7 +244,6 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             _displayPickedImage(),
             ElevatedButton(
               onPressed: _pickeImage,
               style: ElevatedButton.styleFrom(
@@ -259,6 +258,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
               ),
             ),
             // Display the picked image
+            _displayPickedImage(),
             const Text('Rate Your Day:'),
             Row(
               children: List.generate(5, (index) {
