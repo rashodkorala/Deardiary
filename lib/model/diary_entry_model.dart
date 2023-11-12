@@ -5,12 +5,14 @@ class DiaryEntry {
   String date;
   String content;
   int rating;
+  String imageUrl;
 
   DiaryEntry({
     this.id = '', // Initialize with an empty string
     required this.date,
     required this.content,
     required this.rating,
+    this.imageUrl = '',
   });
 
   // Convert a Firestore snapshot into a DiaryEntry instance
@@ -21,6 +23,7 @@ class DiaryEntry {
       date: data['date'],
       content: data['content'],
       rating: data['rating'],
+      imageUrl: data['imageUrl'],
     );
   }
 
@@ -30,6 +33,7 @@ class DiaryEntry {
       'date': date,
       'content': content,
       'rating': rating,
+      'imageUrl': imageUrl,
     };
   }
 }

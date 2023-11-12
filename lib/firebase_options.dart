@@ -67,6 +67,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '437175363680',
     projectId: 'deardiary-9f3b0',
     storageBucket: 'deardiary-9f3b0.appspot.com',
+    iosClientId: '437175363680-9m20r0h2g63l07huce7a9q688g65mp38.apps.googleusercontent.com',
     iosBundleId: 'com.example.deardiary',
   );
 
@@ -76,6 +77,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '437175363680',
     projectId: 'deardiary-9f3b0',
     storageBucket: 'deardiary-9f3b0.appspot.com',
+    iosClientId: '437175363680-d8agj146mj789ignhgvcs8fejktgo2bv.apps.googleusercontent.com',
     iosBundleId: 'com.example.deardiary.RunnerTests',
   );
 }

@@ -1,8 +1,10 @@
 import 'package:deardiary/model/diary_entry_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../controller/diary_entry_service.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class DiaryEntryView extends StatefulWidget {
   final DiaryEntry? diaryEntry; // Add this line
@@ -19,6 +21,8 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
   List<String> existingDates = [];
   bool isEditing = false;
 
+  File? _pickedImage;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +37,50 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       _selectedDate = DateTime.parse(diaryEntry.date);
       print(_selectedDate);
     }
+  }
+
+  Future<void> _uploadImage() async {
+    try {
+      if (_pickedImage != null) {
+        final fileName =
+            'diary_images/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final ref =
+            firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+
+        await ref.putFile(_pickedImage!);
+
+        // Get the download URL of the uploaded image
+        final imageUrl = await ref.getDownloadURL();
+
+        // Now, you can store the imageUrl in your database or use it as needed
+        print('Image uploaded successfully. URL: $imageUrl');
+      } else {
+        print('No image picked.');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+  }
+
+  Future<void> _pickeImage() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _pickedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  Widget _displayPickedImage() {
+    return _pickedImage != null
+        ? Image.file(
+            _pickedImage!,
+            height: 100,
+            width: 100,
+            fit: BoxFit.cover,
+          )
+        : Container(); // You can customize this container as needed
   }
 
   Future<void> _loadExistingDates() async {
@@ -150,6 +198,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       return ElevatedButton(
         onPressed: () {
           _saveDiaryEntry();
+          _uploadImage();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
@@ -195,6 +244,21 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+             _displayPickedImage(),
+            ElevatedButton(
+              onPressed: _pickeImage,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Customize the button color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              child: Text(
+                'Upload Image',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            // Display the picked image
             const Text('Rate Your Day:'),
             Row(
               children: List.generate(5, (index) {

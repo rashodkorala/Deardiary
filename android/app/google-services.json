@@ -12,7 +12,12 @@
           "package_name": "com.example.deardiary"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "437175363680-t69hdtqofnsld9k02krppvtqq4hiphvl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBhqdrgvNA6NyGTAoWHgpULvWNTWKUJo2g"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437175363680-t69hdtqofnsld9k02krppvtqq4hiphvl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "437175363680-9m20r0h2g63l07huce7a9q688g65mp38.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.deardiary"
+              }
+            }
+          ]
         }
       }
     }
