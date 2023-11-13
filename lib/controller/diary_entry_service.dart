@@ -10,9 +10,9 @@ class DiaryEntryService {
 
   DiaryEntryService()
       : DiaryEntryCollection = FirebaseFirestore.instance
-            .collection('diary_entries')
+            .collection('Users')
             .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('userDiaryEntries');
+            .collection('DiaryEntries');
 
   Future<DocumentReference<Object?>> addNewDiaryEntry(
       DiaryEntry diaryEntry) async {

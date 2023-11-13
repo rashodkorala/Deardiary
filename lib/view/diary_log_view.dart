@@ -1,3 +1,4 @@
+import 'package:deardiary/view/diary_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../controller/diary_entry_service.dart';
@@ -21,6 +22,12 @@ class _DiaryLogViewState extends State<DiaryLogView> {
     _loadDiaryEntries();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadDiaryEntries();
+  }
+
   Future<void> _loadDiaryEntries() async {
     try {
       // Use your DiaryEntryService to fetch the entries
@@ -35,32 +42,15 @@ class _DiaryLogViewState extends State<DiaryLogView> {
     }
   }
 
-  // void onDiaryEntryTapped(DiaryEntry entry, BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => DiaryEntryView(
-  //         diaryEntry: entry, // Pass the selected entry for editing
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  void onDiaryEntryLongPressed(DiaryEntry entry, BuildContext context) {
+  void onDiaryEntryTap(DiaryEntry entry, BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DiaryEntryView(
+        builder: (context) => DiaryView(
           diaryEntry: entry, // Pass the selected entry for editing
         ),
       ),
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadDiaryEntries();
   }
 
   Future<void> _handleLogout() async {
@@ -111,10 +101,7 @@ class _DiaryLogViewState extends State<DiaryLogView> {
         children: <Widget>[
           for (final diaryEntry in _diaryEntries)
             GestureDetector(
-              onLongPress: () {
-                // onDiaryEntryTapped(diaryEntry, context);
-                onDiaryEntryLongPressed(diaryEntry, context);
-              },
+              onTap: () => onDiaryEntryTap(diaryEntry, context),
               child: DiaryEntryCard(
                 date: diaryEntry.date,
                 content: diaryEntry.content,

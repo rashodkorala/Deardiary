@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:deardiary/model/diary_entry_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +41,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     }
   }
 
-  Future<void> _uploadImage() async {
+  Future<String> _uploadImage() async {
     try {
       if (_pickedImage != null) {
         final fileName =
@@ -51,14 +53,19 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
 
         // Get the download URL of the uploaded image
         final imageUrl = await ref.getDownloadURL();
-
+        return imageUrl;
         // Now, you can store the imageUrl in your database or use it as needed
-        print('Image uploaded successfully. URL: $imageUrl');
+      } else if (isEditing &&
+          widget.diaryEntry != null &&
+          widget.diaryEntry!.imageUrl!.isNotEmpty) {
+        return widget.diaryEntry!.imageUrl!;
       } else {
         print('No image picked.');
+        return '';
       }
     } catch (e) {
       print('Error uploading image: $e');
+      return '';
     }
   }
 
@@ -73,14 +80,30 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
   }
 
   Widget _displayPickedImage() {
-    return _pickedImage != null
-        ? Image.file(
-            _pickedImage!,
-            height: 100,
-            width: 100,
-            fit: BoxFit.cover,
-          )
-        : Container(); // You can customize this container as needed
+    if (_pickedImage != null) {
+      // Display the newly picked image
+      return Expanded(
+        child: Image.file(
+          _pickedImage!,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (isEditing &&
+        widget.diaryEntry != null &&
+        widget.diaryEntry!.imageUrl!.isNotEmpty) {
+      // Display existing image if editing and there is an image URL
+      return Expanded(
+        child: Image.network(
+          widget.diaryEntry!.imageUrl!,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      // Display a placeholder container
+      return Container(
+        color: Color.fromARGB(255, 0, 0, 0),
+      );
+    }
   }
 
   Future<void> _loadExistingDates() async {
@@ -96,39 +119,39 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     }
   }
 
-  ElevatedButton buildDeleteButton() {
-    if (isEditing) {
-      return ElevatedButton(
-        onPressed: () {
-          _showDeleteConfirmationDialog();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red, // Customize the button color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-        child: Text(
-          'Delete Entry',
-          style: TextStyle(color: Colors.white),
-        ),
-      );
-    } else {
-      return ElevatedButton(
-        onPressed: null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey, // Customize the button color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-        child: Text(
-          'Delete Entry',
-          style: TextStyle(color: Colors.white),
-        ),
-      );
-    }
-  }
+  // ElevatedButton buildDeleteButton() {
+  //   if (isEditing) {
+  //     return ElevatedButton(
+  //       onPressed: () {
+  //         _showDeleteConfirmationDialog();
+  //       },
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: Colors.red, // Customize the button color
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(30.0),
+  //         ),
+  //       ),
+  //       child: Text(
+  //         'Delete Entry',
+  //         style: TextStyle(color: Colors.white),
+  //       ),
+  //     );
+  //   } else {
+  //     return ElevatedButton(
+  //       onPressed: null,
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: Colors.grey, // Customize the button color
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(30.0),
+  //         ),
+  //       ),
+  //       child: Text(
+  //         'Delete Entry',
+  //         style: TextStyle(color: Colors.white),
+  //       ),
+  //     );
+  //   }
+  // }
 
   Future<void> _showWarningDialog() async {
     return showDialog(
@@ -150,32 +173,32 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     );
   }
 
-  Future<void> _showDeleteConfirmationDialog() async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Delete Entry'),
-          content: Text('Are you sure you want to delete this entry?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                _deleteDiaryEntry();
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _showDeleteConfirmationDialog() async {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text('Delete Entry'),
+  //         content: Text('Are you sure you want to delete this entry?'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Close the dialog
+  //             },
+  //             child: Text('Cancel'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               _deleteDiaryEntry();
+  //               Navigator.of(context).pop(); // Close the dialog
+  //             },
+  //             child: Text('Delete'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   ElevatedButton buildSaveButton() {
     if (isEditing) {
@@ -198,7 +221,6 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       return ElevatedButton(
         onPressed: () {
           _saveDiaryEntry();
-          _uploadImage();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
@@ -221,7 +243,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     return Row(children: [
       buildSaveButton(),
       SizedBox(width: 120),
-      buildDeleteButton(),
+      // buildDeleteButton(),
     ]);
   }
 
@@ -244,6 +266,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _displayPickedImage(),
             ElevatedButton(
               onPressed: _pickeImage,
               style: ElevatedButton.styleFrom(
@@ -258,7 +281,6 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
               ),
             ),
             // Display the picked image
-            _displayPickedImage(),
             const Text('Rate Your Day:'),
             Row(
               children: List.generate(5, (index) {
@@ -336,29 +358,30 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     }
   }
 
-  void _deleteDiaryEntry() async {
-    if (widget.diaryEntry != null) {
-      final diaryService = DiaryEntryService();
-      try {
-        await diaryService.deleteDiaryEntry(widget.diaryEntry!);
-        // Optionally, you can show a confirmation message.
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Diary entry deleted successfully'),
-          ),
-        );
-        // Navigate to the diary_log_view after deleting the entry
-        Navigator.pop(context, true);
-        Navigator.pushReplacementNamed(context, '/diaryLogView');
-      } catch (e) {
-        print('Error deleting diary entry: $e');
-      }
-    }
-  }
+  // void _deleteDiaryEntry() async {
+  //   if (widget.diaryEntry != null) {
+  //     final diaryService = DiaryEntryService();
+  //     try {
+  //       await diaryService.deleteDiaryEntry(widget.diaryEntry!);
+  //       // Optionally, you can show a confirmation message.
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Diary entry deleted successfully'),
+  //         ),
+  //       );
+  //       // Navigate to the diary_log_view after deleting the entry
+  //       Navigator.pop(context, true);
+  //       Navigator.pushReplacementNamed(context, '/diaryLogView');
+  //     } catch (e) {
+  //       print('Error deleting diary entry: $e');
+  //     }
+  //   }
+  // }
 
   void _saveDiaryEntry() async {
     final selectedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
     final content = _descriptionController.text;
+    final imageUrl = await _uploadImage();
     print(existingDates);
     if (existingDates.contains(selectedDate)) {
       // Date already exists, show a warning dialog.
@@ -370,6 +393,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       date: selectedDate,
       content: content,
       rating: _rating,
+      imageUrl: imageUrl,
     );
 
     final diaryService = DiaryEntryService();
@@ -401,12 +425,14 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     if (widget.diaryEntry != null) {
       final selectedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
       final content = _descriptionController.text;
+      final imageUrl = await _uploadImage();
 
       final updatedEntry = DiaryEntry(
         id: widget.diaryEntry!.id,
         date: selectedDate,
         content: content,
         rating: _rating,
+        imageUrl: imageUrl,
       );
 
       final diaryService = DiaryEntryService();
