@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'package:deardiary/view/diary_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +22,13 @@ class _DiaryLogViewState extends State<DiaryLogView> {
   void initState() {
     super.initState();
     _loadDiaryEntries();
+    print('initState');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadDiaryEntries();
+    print('didChangeDependencies');
   }
 
   Future<void> _loadDiaryEntries() async {
@@ -64,6 +67,10 @@ class _DiaryLogViewState extends State<DiaryLogView> {
     }
   }
 
+  Future<void> _refresh() async {
+    await _loadDiaryEntries();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,19 +104,25 @@ class _DiaryLogViewState extends State<DiaryLogView> {
           ),
         ],
       ),
-      body: ListView(
-        children: <Widget>[
-          for (final diaryEntry in _diaryEntries)
-            GestureDetector(
-              onTap: () => onDiaryEntryTap(diaryEntry, context),
-              child: DiaryEntryCard(
-                date: diaryEntry.date,
-                content: diaryEntry.content,
-                rating: diaryEntry.rating,
-                parent: this,
+      body: RefreshIndicator(
+        color: Colors.black,
+        onRefresh: _refresh,
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        strokeWidth: 1.0,
+        child: ListView(
+          children: <Widget>[
+            for (final diaryEntry in _diaryEntries)
+              GestureDetector(
+                onTap: () => onDiaryEntryTap(diaryEntry, context),
+                child: DiaryEntryCard(
+                  date: diaryEntry.date,
+                  content: diaryEntry.content,
+                  rating: diaryEntry.rating,
+                  parent: this,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

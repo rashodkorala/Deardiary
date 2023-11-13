@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:deardiary/model/diary_entry_model.dart';
@@ -101,7 +103,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     } else {
       // Display a placeholder container
       return Container(
-        color: Color.fromARGB(255, 0, 0, 0),
+        color: const Color.fromARGB(255, 0, 0, 0),
       );
     }
   }
@@ -158,14 +160,14 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Warning'),
-          content: Text('An entry already exists for this date.'),
+          title: const Text('Warning'),
+          content: const Text('An entry already exists for this date.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -173,34 +175,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     );
   }
 
-  // Future<void> _showDeleteConfirmationDialog() async {
-  //   return showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text('Delete Entry'),
-  //         content: Text('Are you sure you want to delete this entry?'),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text('Cancel'),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               _deleteDiaryEntry();
-  //               Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text('Delete'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
-  ElevatedButton buildSaveButton() {
+  ElevatedButton buildSaveandUpdateButton() {
     if (isEditing) {
       return ElevatedButton(
         onPressed: () {
@@ -212,7 +187,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        child: Text(
+        child: const Text(
           'Update Entry',
           style: TextStyle(color: Colors.white),
         ),
@@ -228,23 +203,12 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        child: Text(
+        child: const Text(
           'Save Entry',
           style: TextStyle(color: Colors.white),
         ),
       );
     }
-  }
-
-  Widget _showButtons() {
-    // final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-    // final dateExists = existingDates.contains(formattedDate);
-    // final isSameDate = widget.diaryEntry?.date == formattedDate;
-    return Row(children: [
-      buildSaveButton(),
-      SizedBox(width: 120),
-      // buildDeleteButton(),
-    ]);
   }
 
   @override
@@ -275,7 +239,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Upload Image',
                 style: TextStyle(color: Colors.white),
               ),
@@ -298,11 +262,11 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
                 );
               }),
             ),
-            SizedBox(height: 20),
-            Text('Select Date:'),
+            const SizedBox(height: 20),
+            const Text('Select Date:'),
             Text(
               '${_selectedDate.toLocal()}'.split(' ')[0],
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
             ElevatedButton(
               onPressed: () => _selectDate(context),
@@ -327,7 +291,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
             ),
             const SizedBox(height: 20),
             // "Save" button to save the diary entry
-            _showButtons(),
+            buildSaveandUpdateButton(),
           ],
         ),
       ),
@@ -358,26 +322,6 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
     }
   }
 
-  // void _deleteDiaryEntry() async {
-  //   if (widget.diaryEntry != null) {
-  //     final diaryService = DiaryEntryService();
-  //     try {
-  //       await diaryService.deleteDiaryEntry(widget.diaryEntry!);
-  //       // Optionally, you can show a confirmation message.
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text('Diary entry deleted successfully'),
-  //         ),
-  //       );
-  //       // Navigate to the diary_log_view after deleting the entry
-  //       Navigator.pop(context, true);
-  //       Navigator.pushReplacementNamed(context, '/diaryLogView');
-  //     } catch (e) {
-  //       print('Error deleting diary entry: $e');
-  //     }
-  //   }
-  // }
-
   void _saveDiaryEntry() async {
     final selectedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
     final content = _descriptionController.text;
@@ -401,7 +345,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
       await diaryService.addNewDiaryEntry(newEntry);
       // Show a confirmation SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Diary entry saved successfully'),
         ),
       );
@@ -440,7 +384,7 @@ class _DiaryEntryViewState extends State<DiaryEntryView> {
         await diaryService.updateDiaryEntry(updatedEntry);
         // Optionally, you can show a confirmation message.
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Diary entry updated successfully'),
           ),
         );

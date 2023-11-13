@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import '../model/diary_entry_model.dart';
@@ -35,8 +35,7 @@ class DiaryView extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Centered image
             if (diaryEntry.imageUrl!.isNotEmpty)
@@ -53,16 +52,20 @@ class DiaryView extends StatelessWidget {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
+
             // Display the rating using stars
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (index) {
+            Row(children: [
+              const Text(
+                'Rating:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              ...List.generate(5, (index) {
                 return Icon(
                   index < diaryEntry.rating ? Icons.star : Icons.star_border,
                   color: Colors.amber,
                 );
               }),
-            ),
+            ]),
             const SizedBox(height: 8),
             const Text(
               'Content:',
@@ -71,7 +74,6 @@ class DiaryView extends StatelessWidget {
             Text(
               diaryEntry.content,
               style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -80,7 +82,7 @@ class DiaryView extends StatelessWidget {
   }
 
   void _handleEdit(BuildContext context) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => DiaryEntryView(diaryEntry: diaryEntry),
@@ -137,7 +139,7 @@ class DiaryView extends StatelessWidget {
         ),
       );
 
-      // Navigate to the diary_log_view after deleting the entry
+      // Navigate back to the diary log view
       Navigator.pop(context, true);
       Navigator.pushReplacementNamed(context, '/diaryLogView');
     } catch (e) {
