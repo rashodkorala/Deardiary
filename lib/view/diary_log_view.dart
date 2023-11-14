@@ -1,13 +1,12 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:deardiary/view/diary_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+
 import '../controller/diary_entry_service.dart';
 import '../controller/pdf_service.dart';
 import 'diary_entry_view.dart';
