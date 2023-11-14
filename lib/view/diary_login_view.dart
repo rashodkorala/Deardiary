@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -9,6 +10,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool isRegisterHereFocused = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   String email = '';
   String password = '';
   String errorMessage = '';
@@ -34,6 +37,41 @@ class _LoginViewState extends State<LoginView> {
         errorMessage = 'Login failed. Please try again.';
       });
       print("login failed");
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+
+      if (googleSignInAccount == null) {
+        // User canceled Google Sign-In
+        return;
+      }
+
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // User is logged in, navigate to the diary_log_view.dart view
+        Navigator.pushReplacementNamed(context, '/diaryLogView');
+      } else {
+        // Handle Google Sign-In failure
+      }
+    } catch (e) {
+      print(e.toString());
+      // Handle Google Sign-In error
     }
   }
 
@@ -131,7 +169,8 @@ class _LoginViewState extends State<LoginView> {
 
                     ElevatedButton(
                       onPressed: () {
-                        ; // Call the function to handle Google Sign-In
+                        // Call the function to handle Google Sign-In
+                        signInWithGoogle();
                       },
                       child: Text('Login with Google'),
                       style: ElevatedButton.styleFrom(

@@ -6,6 +6,8 @@ class DiaryEntry {
   String content;
   int rating;
   String? imageUrl;
+  String? imagePath;
+  List<int>? imageBytes;
 
   DiaryEntry({
     this.id = '', // Initialize with an empty string
@@ -13,6 +15,8 @@ class DiaryEntry {
     required this.content,
     required this.rating,
     this.imageUrl = '',
+    this.imagePath = '',
+    this.imageBytes = const [],
   });
 
   // Convert a Firestore snapshot into a DiaryEntry instance

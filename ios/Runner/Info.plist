@@ -49,6 +49,18 @@
 	<string>Access to your photo library</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Access to your camera</string>
-
+	<key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>com.googleusercontent.apps.437175363680-9m20r0h2g63l07huce7a9q688g65mp38</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.437175363680-9m20r0h2g63l07huce7a9q688g65mp38</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

@@ -1,9 +1,15 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:deardiary/view/diary_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import '../controller/diary_entry_service.dart';
+import '../controller/pdf_service.dart';
 import 'diary_entry_view.dart';
 import '../model/diary_entry_model.dart';
 import 'diary_statistics_view.dart';
@@ -33,15 +39,50 @@ class _DiaryLogViewState extends State<DiaryLogView> {
 
   Future<void> _loadDiaryEntries() async {
     try {
-      // Use your DiaryEntryService to fetch the entries
       final diaryService = DiaryEntryService();
       final entries = await diaryService.getAllDiaryEntries();
+
+      // Download images and update entries with image paths
+      for (final entry in entries) {
+        if (entry.imageUrl != null) {
+          final imageBytes = await _downloadImage(entry.imageUrl!);
+          entry.imageBytes = imageBytes;
+        }
+      }
 
       setState(() {
         _diaryEntries = entries;
       });
     } catch (e) {
       print('Error loading diary entries: $e');
+    }
+  }
+
+  Future<Uint8List?> _downloadImage(String imageUrl) async {
+    final ref = FirebaseStorage.instance.refFromURL(imageUrl);
+    final downloadData = await ref.getData();
+    return downloadData;
+  }
+
+  Future<void> _exportToPdf() async {
+    try {
+      final entries = _diaryEntries.map((entry) {
+        return {
+          'date': entry.date,
+          'content': entry.content,
+          'rating': entry.rating,
+          'imageBytes': entry.imageBytes, // Include imageBytes in the export
+        };
+      }).toList();
+
+      final pdfFile = await PdfService.generatePdf(entries);
+
+      // Share the PDF file
+      // await Share.shareFiles([pdfFile.path], text: 'Diary Entries PDF');
+
+      print('PDF generated successfully: ${pdfFile.path}');
+    } catch (e) {
+      print('Error exporting to PDF: $e');
     }
   }
 
@@ -83,6 +124,10 @@ class _DiaryLogViewState extends State<DiaryLogView> {
         ),
         backgroundColor: Colors.black,
         actions: [
+          IconButton(
+            onPressed: _exportToPdf,
+            icon: Icon(Icons.picture_as_pdf),
+          ),
           IconButton(
             onPressed: () {
               Navigator.push(
